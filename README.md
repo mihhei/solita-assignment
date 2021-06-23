@@ -1,3 +1,13 @@
+## For starting this project clone it locally with
+git clone https://github.com/mihhei/solita-assignment.git .
+
+## Before runing project install all dependencies in root and client directory using
+npm i
+
+## For starting with project run command from root directory:
+npm run dev
+
+
 # vaccination-exercise
 
 THL has ordered us to create a vaccination database which contains information about vaccine orders and vaccinations.
