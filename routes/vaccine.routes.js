@@ -182,7 +182,12 @@ router.post("/orders/expiredandused", function (req, res) {
           response.forEach((item) => {
             allVaccine += item.injections;
           });
-          console.log("all vaccine", allVaccine, "all bottles", response.length);
+          console.log(
+            "all vaccine",
+            allVaccine,
+            "all bottles",
+            response.length
+          );
           dbConnect.query(
             "SELECT * FROM vaccination INNER JOIN vaccine ON vaccination.sourceBottle = vaccine.id AND vaccine.arrived < ? AND vaccine.arrived > ? AND vaccine.vaccine IN (?)",
             [dateTo, dateFrom, selectedVaccine],
@@ -192,6 +197,74 @@ router.post("/orders/expiredandused", function (req, res) {
               const usedVaccine = response.length;
               const expiredVaccine = allVaccine - usedVaccine;
               res.json({ usedVaccine, expiredVaccine });
+            }
+          );
+        }
+      );
+    }
+  }
+});
+
+router.post("/orders/expiretendays", function (req, res) {
+  const dateTo = new Date(req.body.state.dateTo - 1728000000);
+  console.log("dateTo", dateTo);
+  const date30daysBefore = new Date(req.body.state.dateTo - 2592000000);
+  const dateFromDatePicker = new Date(req.body.state.dateFrom);
+  const dateFrom =
+    dateFromDatePicker < date30daysBefore
+      ? date30daysBefore
+      : dateFromDatePicker;
+  if (dateTo < dateFromDatePicker) {
+    res.json({ message: "Date FROM must be at least 20 days before date TO" });
+  } else {
+    const selectedVaccine = [];
+    if (req.body.state.selectAntiqua) {
+      selectedVaccine.push("Antiqua");
+    }
+    if (req.body.state.selectSolar) {
+      selectedVaccine.push("SolarBuddhica");
+    }
+    if (req.body.state.selectZerpfy) {
+      selectedVaccine.push("Zerpfy");
+    }
+    if (!selectedVaccine.length) {
+      res.json({
+        message: "Select any vaccine!",
+      });
+    } else {
+      const sorter = "arrived";
+      const sql =
+        "SELECT * FROM vaccine WHERE arrived < ? AND arrived > ? AND vaccine IN (?) ORDER BY " +
+        dbConnect.escapeId(sorter);
+      dbConnect.query(
+        sql,
+        [dateTo, dateFrom, selectedVaccine],
+        (err, response, fields) => {
+          if (err) throw err;
+          let allVaccine = 0;
+          response.forEach((item) => {
+            allVaccine += item.injections;
+          });
+          console.log(
+            "all vaccine",
+            allVaccine,
+            "all bottles",
+            response.length
+          );
+          dbConnect.query(
+            "SELECT * FROM vaccination INNER JOIN vaccine ON vaccination.sourceBottle = vaccine.id AND vaccination.vaccinationDate < ? AND vaccine.arrived < ? AND vaccine.arrived > ? AND vaccine.vaccine IN (?)",
+            [
+              new Date(req.body.state.dateTo),
+              dateTo,
+              dateFrom,
+              selectedVaccine,
+            ],
+            (err, response, fields) => {
+              if (err) throw err;
+
+              const usedVaccine = response.length;
+              const expiredVaccine = allVaccine - usedVaccine;
+              res.json({ message: "", usedVaccine, expiredVaccine });
             }
           );
         }

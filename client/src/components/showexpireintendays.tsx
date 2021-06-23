@@ -6,14 +6,16 @@ import { Total } from "./total";
 import { Loader } from "./loader";
 
 interface DataFromServer {
+  message: string;
   usedVaccine: number;
   expiredVaccine: number;
 }
 
-export const ShowUsedAndExpiredVaccine: React.FC = () => {
+export const ShowExpireInTenDays: React.FC = () => {
   const [mainState] = useContext(Context);
 
   const [data, setData] = useState<DataFromServer>({
+    message: "",
     usedVaccine: 0,
     expiredVaccine: 0,
   });
@@ -22,7 +24,7 @@ export const ShowUsedAndExpiredVaccine: React.FC = () => {
     const fetchingData = async () => {
       try {
         const fetch = await request(
-          "/api/vaccine/orders/expiredandused",
+          "/api/vaccine/orders/expiretendays",
           "POST",
           {
             state: mainState,
@@ -38,13 +40,13 @@ export const ShowUsedAndExpiredVaccine: React.FC = () => {
   }, [request, mainState]);
   if (loading) {
     return <Loader />;
-  } else
+  } else if (data.message === "") {
     return (
-      <>
-        <div className="dateField">
-          <p>Number of expired vaccine total {data.expiredVaccine}</p>
-          <p>Number of used vaccine total {data.usedVaccine}</p>
-        </div>
-      </>
+      <div className="dateField">
+        Number of vaccines that expire in next ten days {data.expiredVaccine}
+      </div>
     );
+  } else {
+    return <div className="dateField">{data.message}</div>;
+  }
 };

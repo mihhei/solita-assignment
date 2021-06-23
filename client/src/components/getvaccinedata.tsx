@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ShowOrdersToDate } from "./showorderstodate";
 import { ShowExpiredBottles } from "./showexpiredbottles";
 import { ShowUsedAndExpiredVaccine } from "./showusedandexpiredvaccine";
+import { ShowExpireInTenDays } from "./showexpireintendays";
 
 export const GetVaccineData: React.FC = () => {
   const [selected, setSelected] = useState<string[]>([]);
@@ -30,12 +31,16 @@ export const GetVaccineData: React.FC = () => {
           <option value="usedAndExpiredVaccine">
             Get number of expired vaccine before usage
           </option>
+          <option value="expireInTenDays">
+            Get vaccines that are going to expire in next ten days
+          </option>
         </select>
         <label>Choose your option</label>
       </div>
       {selected[0] === "showOrders" && <ShowOrdersToDate />}
       {selected[0] === "expiredBottles" && <ShowExpiredBottles />}
       {selected[0] === "usedAndExpiredVaccine" && <ShowUsedAndExpiredVaccine />}
+      {selected[0] === "expireInTenDays" && <ShowExpireInTenDays />}
     </div>
   );
 };
