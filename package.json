@@ -1,0 +1,29 @@
+{
+  "name": "solita",
+  "version": "1.0.0",
+  "description": "assignment",
+  "main": "index.js",
+  "scripts": {
+    "server": "nodemon index.js",
+    "start": "cross-env node index.js",
+    "client:install": "npm run install --prefix client",
+    "client:build": "npm run build --prefix client",
+    "client": "npm run start --prefix client",
+    "dev": "cross-env NODE_ENV=development concurrently \"npm run server\" \"npm run client\""
+  },
+  "author": "Mihail Heimonen",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "concurrently": "^6.2.0",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "express": "^4.17.1",
+    "line-reader": "^0.4.0",
+    "microseconds": "^0.2.0",
+    "moment-timezone": "^0.5.33",
+    "mysql": "^2.18.1",
+    "n-readlines": "^1.0.1",
+    "nodemon": "^2.0.7"
+  }
+}
